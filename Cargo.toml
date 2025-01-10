@@ -4,5 +4,6 @@ version = "0.0.0"
 edition = "2021"
 authors = ["Florian Penn"]
 license = "GPL-2.0-only"
+description = "Driver for ROHM BD18378 12CH LED Driver IC"
 
 [dependencies]
