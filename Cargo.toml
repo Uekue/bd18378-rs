@@ -7,3 +7,4 @@ license = "GPL-2.0-only"
 description = "Driver for ROHM BD18378 12CH LED Driver IC"
 
 [dependencies]
+embedded-hal = "1.0.0"
