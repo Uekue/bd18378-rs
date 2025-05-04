@@ -17,5 +17,12 @@ pub mod registers;
 pub type OperationResult = Result<(), ()>;
 
 
+/// The `Bd18378` struct represents the ROHM BD18378 LED Driver IC.
+pub struct Bd18378<'a, SPI: SpiDevice> {
+    spi: &'a mut SPI,
+    is_initialized: bool,
+    channel_enable: [bool; 12],
+}
+
     }
 }
