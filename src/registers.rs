@@ -1,6 +1,7 @@
 /// The `WriteRegister` enum represents various writeable registers
 /// of the ROHM BD18378 LED Driver IC, along with their corresponding hexadecimal addresses.
 #[derive(Debug, Clone, Copy)]
+#[repr(u8)]
 pub enum WriteRegister {
     
     // LED current calibration registers
