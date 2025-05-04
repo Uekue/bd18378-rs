@@ -13,5 +13,9 @@ pub mod registers;
     #[test]
     fn it_works() {
         assert_eq!(1, 1);
+/// The `OperationResult` type represents the result of an operation on the BD18378 LED Driver IC.
+pub type OperationResult = Result<(), ()>;
+
+
     }
 }
