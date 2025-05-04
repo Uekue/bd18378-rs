@@ -33,6 +33,14 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         }
     }
 
+    /// Returns whether the BD18378 LED Driver IC is initialized.
+    ///
+    /// *Note: This is not a live view of the IC state, but rather a flag
+    /// indicating whether the initialization sequence has been successfully executed.
+    /// This behavior might change in the future.*
+    pub fn is_initialized(&self) -> bool { self.is_initialized }
+
+
     /// Writes a value to a specified register of the BD18378 LED Driver IC.
     fn write_register(&mut self, register: WriteRegister, value: u8) -> Result<[u8; 2], ()> {
         let mut data = [register as u8, value];
