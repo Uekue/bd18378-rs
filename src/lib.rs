@@ -32,5 +32,25 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
             channel_enable: [false; 12],
         }
     }
+
+    /// Returns the initialization sequence for the BD18378 LED Driver IC.
+    const fn get_init_sequence() -> [(WriteRegister, u8); 15] {
+        [
+            (WriteRegister::SoftwareReset, 0b1010_0001u8),
+            (WriteRegister::SoftwareReset, 0b1010_0001u8),
+            (WriteRegister::ReservedB5, 0b1001_1110u8),
+            (WriteRegister::ReservedB6, 0b0000_0000u8),
+            (WriteRegister::ReservedB5, 0b1001_1110u8),
+            (WriteRegister::ReservedB7, 0b0000_0000u8),
+            (WriteRegister::ReservedB5, 0b1001_1110u8),
+            (WriteRegister::ReservedB8, 0b0000_0000u8),
+            (WriteRegister::ReservedB5, 0b1001_1110u8),
+            (WriteRegister::ReservedB9, 0b0000_0000u8),
+            (WriteRegister::Reserved79, 0b1101_0110u8),
+            (WriteRegister::Reserved7A, 0b0000_0000u8),
+            (WriteRegister::Reserved79, 0b1101_0110u8),
+            (WriteRegister::Reserved7B, 0b0000_0000u8),
+            (WriteRegister::SoftwareReset, 0b1010_0001u8),
+        ]
     }
 }
