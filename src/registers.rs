@@ -1,5 +1,9 @@
+/// The `WriteRegister` enum represents various writeable registers
+/// of the ROHM BD18378 LED Driver IC, along with their corresponding hexadecimal addresses.
 #[derive(Debug, Clone, Copy)]
 pub enum WriteRegister {
+    
+    // LED current calibration registers
     ChannelCalibration00 = 0x48,
     ChannelCalibration01 = 0x49,
     ChannelCalibration02 = 0x4A,
@@ -12,9 +16,15 @@ pub enum WriteRegister {
     ChannelCalibration09 = 0x51,
     ChannelCalibration10 = 0x52,
     ChannelCalibration11 = 0x53,
+    
+    // LED enable registers
     ChannelEnable00To05 = 0x56,
     ChannelEnable06To11 = 0x57,
+    
+    // IC reset register
     SoftwareReset = 0x6C,
+    
+    // Reserved registers used during IC initialization
     Reserved79 = 0x79,
     Reserved7A = 0x7A,
     Reserved7B = 0x7B,
