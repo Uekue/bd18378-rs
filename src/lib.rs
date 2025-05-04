@@ -33,6 +33,18 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         }
     }
 
+    /// Writes a value to a specified register of the BD18378 LED Driver IC.
+    fn write_register(&mut self, register: WriteRegister, value: u8) -> Result<[u8; 2], ()> {
+        let mut data = [register as u8, value];
+        let result = self.spi.transfer_in_place(&mut data);
+        if result.is_ok() {
+            Ok(data)
+        } else {
+            Err(())
+        }
+    }
+
+
     /// Returns the initialization sequence for the BD18378 LED Driver IC.
     const fn get_init_sequence() -> [(WriteRegister, u8); 15] {
         [
