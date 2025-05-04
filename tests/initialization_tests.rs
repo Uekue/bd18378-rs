@@ -98,6 +98,12 @@ fn chip_init_success() {
             vec![WriteRegister::Reserved7B as u8, 0b0000_0000u8],
         ),
         Transaction::transaction_end(),
+        Transaction::transaction_start(),
+        Transaction::transfer_in_place(
+            vec![WriteRegister::StatusReset as u8, 0x3Fu8],
+            vec![0x00u8, 0x00u8],
+        ),
+        Transaction::transaction_end(),
     ];
     let mut spi = Mock::new(&expectations);
 
