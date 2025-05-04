@@ -79,7 +79,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
 
     /// Resets the status register of the BD18378 LED Driver IC.
     fn reset_status_register(&mut self) -> Result<(), ()> {
-        match self.write_register(WriteRegister::StatusReset, 0x37u8) {
+        match self.write_register(WriteRegister::StatusReset, 0b0011_1111u8) {
             Ok(_) => Ok(()),
             Err(_) => Err(()),
         }
