@@ -10,9 +10,6 @@ use crate::registers::WriteRegister;
 
 pub mod registers;
 
-    #[test]
-    fn it_works() {
-        assert_eq!(1, 1);
 /// The `OperationResult` type represents the result of an operation on the BD18378 LED Driver IC.
 pub type OperationResult = Result<(), ()>;
 
@@ -24,5 +21,16 @@ pub struct Bd18378<'a, SPI: SpiDevice> {
     channel_enable: [bool; 12],
 }
 
+impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
+
+    /// Creates a new instance of the `Bd18378` struct. It takes a mutable reference
+    /// to a SPI device as an argument.
+    pub fn new(spi: &'a mut SPI) -> Self {
+        Bd18378 {
+            spi,
+            is_initialized: false,
+            channel_enable: [false; 12],
+        }
+    }
     }
 }
