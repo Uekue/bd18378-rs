@@ -33,6 +33,31 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         }
     }
 
+    /// Initializes the BD18378 LED Driver IC by writing a sequence of values to its registers.
+    /// The sequence is documented in the datasheet of the IC.
+    /// Returns an `OperationResult` indicating success or failure of the initialization sequence.
+    pub fn init(&mut self) -> OperationResult {
+        let mut old_data = [0x00u8, 0x00u8];
+        let seq = Self::get_init_sequence();
+        for (reg, value) in seq.iter() {
+            let result = self.write_register(*reg, *value);
+            if result.is_err() {
+                return Err(());
+            }
+            let data = result?;
+            if data != old_data {
+                return Err(());
+            }
+            old_data = [*reg as u8, *value];
+        }
+
+        if self.reset_status_register().is_err() {
+            return Err(());
+        }
+        self.is_initialized = true;
+        Ok(())
+    }
+
     /// Returns whether the BD18378 LED Driver IC is initialized.
     ///
     /// *Note: This is not a live view of the IC state, but rather a flag
