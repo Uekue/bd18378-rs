@@ -1,3 +1,4 @@
+#[derive(Debug, Clone, Copy)]
 pub enum WriteRegister {
     ChannelCalibration00 = 0x48,
     ChannelCalibration01 = 0x49,
