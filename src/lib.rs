@@ -5,6 +5,8 @@
 
 #![no_std]
 
+use embedded_hal::spi::SpiDevice;
+use crate::registers::WriteRegister;
 
 pub mod registers;
 
