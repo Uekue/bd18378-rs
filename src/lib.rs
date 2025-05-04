@@ -3,6 +3,8 @@
 //! This driver is designed to be used with embedded systems and is compatible
 //! with the `embedded-hal` crate.
 
+#![no_std]
+
 
 pub mod registers;
 
