@@ -23,6 +23,7 @@ pub enum WriteRegister {
     ChannelEnable06To11 = 0x57,
     
     // IC reset register
+    StatusReset = 0x6B,
     SoftwareReset = 0x6C,
     
     // Reserved registers used during IC initialization

@@ -8,3 +8,6 @@ description = "Driver for ROHM BD18378 12CH LED Driver IC"
 
 [dependencies]
 embedded-hal = "1.0.0"
+
+[dev-dependencies]
+embedded-hal-mock = "0.11.1"
