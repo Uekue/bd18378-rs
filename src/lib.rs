@@ -39,16 +39,18 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     pub fn init(&mut self) -> OperationResult {
         let mut old_data = [0x00u8, 0x00u8];
         let seq = Self::get_init_sequence();
+        let mut first = true;
         for (reg, value) in seq.iter() {
             let result = self.write_register(*reg, *value);
             if result.is_err() {
                 return Err(());
             }
             let data = result?;
-            if data != old_data {
                 return Err(());
+            if !first && data != old_data {
             }
             old_data = [*reg as u8, *value];
+            first = false;
         }
 
         if self.reset_status_register().is_err() {
