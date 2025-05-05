@@ -25,7 +25,7 @@ pub enum Error {
 }
 
 /// The `OperationResult` type represents the result of an operation on the BD18378 LED Driver IC.
-pub type OperationResult = Result<(), ()>;
+pub type OperationResult = Result<(), Error>;
 
 
 /// The `Bd18378` struct represents the ROHM BD18378 LED Driver IC.
@@ -55,21 +55,15 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         let seq = Self::get_init_sequence();
         let mut first = true;
         for (reg, value) in seq.iter() {
-            let result = self.write_register(*reg, *value);
-            if result.is_err() {
-                return Err(());
-            }
-            let data = result?;
-                return Err(());
+            let data = self.write_register(*reg, *value)?;
             if !first && data != old_data {
+                return Err(Error::CommunicationError);
             }
             old_data = [*reg as u8, *value];
             first = false;
         }
 
-        if self.reset_status_register().is_err() {
-            return Err(());
-        }
+        self.reset_status_register()?;
         self.is_initialized = true;
         Ok(())
     }
@@ -83,22 +77,20 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
 
 
     /// Writes a value to a specified register of the BD18378 LED Driver IC.
-    fn write_register(&mut self, register: WriteRegister, value: u8) -> Result<[u8; 2], ()> {
+    fn write_register(&mut self, register: WriteRegister, value: u8) -> Result<[u8; 2], Error> {
         let mut data = [register as u8, value];
         let result = self.spi.transfer_in_place(&mut data);
         if result.is_ok() {
             Ok(data)
         } else {
-            Err(())
+            Err(Error::BusError)
         }
     }
 
     /// Resets the status register of the BD18378 LED Driver IC.
-    fn reset_status_register(&mut self) -> Result<(), ()> {
-        match self.write_register(WriteRegister::StatusReset, 0b0011_1111u8) {
-            Ok(_) => Ok(()),
-            Err(_) => Err(()),
-        }
+    fn reset_status_register(&mut self) -> OperationResult {
+        let _ = self.write_register(WriteRegister::StatusReset, 0b0011_1111u8)?;
+        Ok(())
     }
 
     fn _lock_register(&mut self) -> Result<(), ()> { Ok(()) }
