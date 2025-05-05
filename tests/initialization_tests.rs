@@ -152,6 +152,12 @@ fn chip_init_fail_no_answer_pull_up() {
             vec![0xFF, 0xFF],
         ),
         Transaction::transaction_end(),
+        Transaction::transaction_start(),
+        Transaction::transfer_in_place(
+            vec![WriteRegister::SoftwareReset as u8, 0b1010_0001u8],
+            vec![0xFF, 0xFF],
+        ),
+        Transaction::transaction_end(),
     ];
     let mut spi = Mock::new(&expectations);
 
