@@ -93,6 +93,12 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         Ok(())
     }
 
+    /// A placeholder function for locking the BD18378 LED Driver IC's registers.
+    ///
+    /// This function is currently a no-op but is reserved for future functionality
+    /// where register locking might be required to prevent unintended modifications.
+    /// 
+    /// *Note: This function is private and not used in the current implementation.*
     fn _lock_register(&mut self) -> Result<(), ()> { Ok(()) }
 
     /// Returns the initialization sequence for the BD18378 LED Driver IC.
