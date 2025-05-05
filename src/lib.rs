@@ -10,6 +10,20 @@ use crate::registers::WriteRegister;
 
 pub mod registers;
 
+/// The `Error` enum represents various error types that can occur during
+/// communication with the BD18378 LED Driver IC.
+pub enum Error {
+
+    /// Indicates a bus error during SPI communication coming from the used SPI device.
+    BusError,
+
+    /// Indicates a communication error during SPI communication due to an unexpected response.
+    CommunicationError,
+
+    /// Indicates that the device was not in an initialized state after completing the initialization sequence.
+    InitFailed,
+}
+
 /// The `OperationResult` type represents the result of an operation on the BD18378 LED Driver IC.
 pub type OperationResult = Result<(), ()>;
 
