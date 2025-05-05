@@ -56,6 +56,9 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         let mut first = true;
         for (reg, value) in seq.iter() {
             let data = self.write_register(*reg, *value)?;
+            // Validate the SPI transfer response by comparing it with the previous transaction's data.
+            // This ensures the integrity of the communication sequence and guards against unexpected
+            // responses from the device, which could indicate a communication error.
             if !first && data != old_data {
                 return Err(Error::CommunicationError);
             }
