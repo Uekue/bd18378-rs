@@ -78,6 +78,34 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     /// This behavior might change in the future.*
     pub fn is_initialized(&self) -> bool { self.is_initialized }
 
+    
+    /// Update all LED channels based on their enabled state.
+    pub fn update_all_channels(&mut self) -> OperationResult {
+
+        if !self.is_initialized() {
+            return Err(Error::NotInitialized);
+        }
+
+        // first 6 channels
+        let mut value = 0u8;
+        for ch in 0..6 {
+            if self.channel_enable[ch] {
+                value |= 1 << ch;
+            }
+        }
+        self.write_register(WriteRegister::ChannelEnable00To05, value)?;
+
+        // last 6 channels
+        let mut value = 0u8;
+        for ch in 6..12 {
+            if self.channel_enable[ch] {
+                value |= 1 << ch - 6;
+            }
+        }
+        self.write_register(WriteRegister::ChannelEnable06To11, value)?;
+
+        Ok(())
+    }
 
     /// Writes a value to a specified register of the BD18378 LED Driver IC.
     fn write_register(&mut self, register: WriteRegister, value: u8) -> Result<[u8; 2], Error> {
