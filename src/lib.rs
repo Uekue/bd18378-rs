@@ -22,6 +22,9 @@ pub enum Error {
 
     /// Indicates that the device was not in an initialized state after completing the initialization sequence.
     InitFailed,
+    
+    /// Indicates that the device was not in an initialized state when trying to perform an operation.
+    NotInitialized,
 }
 
 /// The `OperationResult` type represents the result of an operation on the BD18378 LED Driver IC.
