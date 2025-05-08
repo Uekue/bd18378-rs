@@ -36,3 +36,9 @@ pub enum WriteRegister {
     ReservedB8 = 0xB8,
     ReservedB9 = 0xB9,
 }
+
+#[derive(Debug, Clone, Copy)]
+#[repr(u8)]
+pub enum ReadRegister {
+    Status = 0xA8,
+}
