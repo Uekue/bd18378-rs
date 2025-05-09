@@ -86,6 +86,23 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     pub fn is_initialized(&self) -> bool { self.is_initialized }
 
     
+    /// Enable a single LED channel by its index.
+    ///
+    /// *Note: This function does not update the LED channel state immediately.
+    /// You need to call `update_all_channels()` to apply the changes.*
+    pub fn enable_channel(&mut self, ch: usize) -> OperationResult {
+        if ch >= self.channel_enable.len() {
+            return Err(Error::InvalidChannel);
+        }
+
+        if !self.is_initialized {
+            return Err(Error::NotInitialized);
+        }
+
+        self.channel_enable[ch] = true;
+        Ok(())
+    }
+
     /// Update all LED channels based on their enabled state.
     pub fn update_all_channels(&mut self) -> OperationResult {
 
