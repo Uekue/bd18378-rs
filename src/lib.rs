@@ -12,6 +12,7 @@ pub mod registers;
 
 /// The `Error` enum represents various error types that can occur during
 /// communication with the BD18378 LED Driver IC.
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Error {
 
     /// Indicates a bus error during SPI communication coming from the used SPI device.
