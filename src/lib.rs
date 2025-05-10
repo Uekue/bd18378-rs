@@ -145,26 +145,25 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         self.check_initialized()?;
 
         // first 6 channels
-        let mut first_group_value = 0u8;
-        for ch in 0..CHANNELS_PER_REGISTER {
-            if self.channel_enable[ch] {
-                first_group_value |= 1 << ch;
-            }
-        }
+        let first_group_value = self.compute_channel_group_value(0, CHANNELS_PER_REGISTER, 0);
         self.write_register(WriteRegister::ChannelEnable00To05, first_group_value)?;
 
-        // last 6 channels
-        let mut second_group_value = 0u8;
-        for ch in CHANNELS_PER_REGISTER..CHANNELS_PER_IC {
-            if self.channel_enable[ch] {
-                second_group_value |= 1 << (ch - CHANNELS_PER_REGISTER);
-            }
-        }
+        let second_group_value = self.compute_channel_group_value(CHANNELS_PER_REGISTER, CHANNELS_PER_IC, CHANNELS_PER_REGISTER);
         self.write_register(WriteRegister::ChannelEnable06To11, second_group_value)?;
 
         Ok(())
     }
 
+    /// Helper function to compute the value for a group of channels.
+    fn compute_channel_group_value(&self, start: usize, end: usize, offset: usize) -> u8 {
+        let mut group_value = 0u8;
+        for ch in start..end {
+            if self.channel_enable[ch] {
+                group_value |= 1 << (ch - offset);
+            }
+        }
+        group_value
+    }
     /// Writes a value to a specified register of the BD18378 LED Driver IC.
     fn write_register(&mut self, register: WriteRegister, value: u8) -> Result<[u8; 2], Error> {
         let mut data = [register as u8, value];
