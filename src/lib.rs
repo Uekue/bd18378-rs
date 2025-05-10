@@ -122,6 +122,24 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     }
 
     /// Update all LED channels based on their enabled state.
+    ///
+    /// This function maps the enabled state of each LED channel to specific bits
+    /// in two 8-bit registers. The BD18378 LED Driver IC has 12 channels, divided
+    /// into two groups of 6 channels each:
+    /// - Channels 0 to 5 are mapped to the `ChannelEnable00To05` register.
+    /// - Channels 6 to 11 are mapped to the `ChannelEnable06To11` register.
+    ///
+    /// For each group, the enabled state of a channel is represented by a single bit
+    /// in the corresponding register:
+    /// - Bit 0 corresponds to the first channel in the group.
+    /// - Bit 1 corresponds to the second channel, and so on.
+    ///
+    /// For example:
+    /// - If channel 0 is enabled, bit 0 of `ChannelEnable00To05` is set to 1.
+    /// - If channel 6 is enabled, bit 0 of `ChannelEnable06To11` is set to 1.
+    ///
+    /// The function first processes channels 0 to 5, then channels 6 to 11, updating
+    /// the corresponding registers with the computed bit values.
     pub fn update_all_channels(&mut self) -> OperationResult {
 
         self.check_initialized()?;
