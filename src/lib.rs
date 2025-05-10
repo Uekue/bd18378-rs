@@ -10,8 +10,15 @@ use crate::registers::WriteRegister;
 
 pub mod registers;
 
+/// The number of LED channels per register.
+const CHANNELS_PER_REGISTER: usize = 6;
+
+/// The total number of LED channels in the BD18378 LED Driver IC.
+const CHANNELS_PER_IC: usize = 12;
+
 /// The `Error` enum represents various error types that can occur during
 /// communication with the BD18378 LED Driver IC.
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Error {
 
     /// Indicates a bus error during SPI communication coming from the used SPI device.
@@ -22,6 +29,12 @@ pub enum Error {
 
     /// Indicates that the device was not in an initialized state after completing the initialization sequence.
     InitFailed,
+
+    /// Indicates that the device was not in an initialized state when trying to perform an operation.
+    NotInitialized,
+
+    /// Indicates that the specified channel index is invalid.
+    InvalidChannel,
 }
 
 /// The `OperationResult` type represents the result of an operation on the BD18378 LED Driver IC.
@@ -32,7 +45,7 @@ pub type OperationResult = Result<(), Error>;
 pub struct Bd18378<'a, SPI: SpiDevice> {
     spi: &'a mut SPI,
     is_initialized: bool,
-    channel_enable: [bool; 12],
+    channel_enable: [bool; CHANNELS_PER_IC],
 }
 
 impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
@@ -43,7 +56,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         Bd18378 {
             spi,
             is_initialized: false,
-            channel_enable: [false; 12],
+            channel_enable: [false; CHANNELS_PER_IC],
         }
     }
 
@@ -78,7 +91,79 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     /// This behavior might change in the future.*
     pub fn is_initialized(&self) -> bool { self.is_initialized }
 
+    /// Enable a single LED channel by its index.
+    ///
+    /// *Note: This function does not update the LED channel state immediately.
+    /// You need to call `update_all_channels()` to apply the changes.*
+    pub fn enable_channel(&mut self, ch: usize) -> OperationResult {
+        if ch >= self.channel_enable.len() {
+            return Err(Error::InvalidChannel);
+        }
 
+        self.check_initialized()?;
+
+        self.channel_enable[ch] = true;
+        Ok(())
+    }
+
+    /// Disable a single LED channel by its index.
+    ///
+    /// *Note: This function does not update the LED channel state immediately.
+    /// You need to call `update_all_channels()` to apply the changes.*
+    pub fn disable_channel(&mut self, ch: usize) -> OperationResult {
+        if ch >= self.channel_enable.len() {
+            return Err(Error::InvalidChannel);
+        }
+
+        self.check_initialized()?;
+
+        self.channel_enable[ch] = false;
+        Ok(())
+    }
+
+    /// Update all LED channels based on their enabled state.
+    ///
+    /// This function maps the enabled state of each LED channel to specific bits
+    /// in two 8-bit registers. The BD18378 LED Driver IC has 12 channels, divided
+    /// into two groups of 6 channels each:
+    /// - Channels 0 to 5 are mapped to the `ChannelEnable00To05` register.
+    /// - Channels 6 to 11 are mapped to the `ChannelEnable06To11` register.
+    ///
+    /// For each group, the enabled state of a channel is represented by a single bit
+    /// in the corresponding register:
+    /// - Bit 0 corresponds to the first channel in the group.
+    /// - Bit 1 corresponds to the second channel, and so on.
+    ///
+    /// For example:
+    /// - If channel 0 is enabled, bit 0 of `ChannelEnable00To05` is set to 1.
+    /// - If channel 6 is enabled, bit 0 of `ChannelEnable06To11` is set to 1.
+    ///
+    /// The function first processes channels 0 to 5, then channels 6 to 11, updating
+    /// the corresponding registers with the computed bit values.
+    pub fn update_all_channels(&mut self) -> OperationResult {
+
+        self.check_initialized()?;
+
+        // first 6 channels
+        let first_group_value = self.compute_channel_group_value(0, CHANNELS_PER_REGISTER, 0);
+        self.write_register(WriteRegister::ChannelEnable00To05, first_group_value)?;
+
+        let second_group_value = self.compute_channel_group_value(CHANNELS_PER_REGISTER, CHANNELS_PER_IC, CHANNELS_PER_REGISTER);
+        self.write_register(WriteRegister::ChannelEnable06To11, second_group_value)?;
+
+        Ok(())
+    }
+
+    /// Helper function to compute the value for a group of channels.
+    fn compute_channel_group_value(&self, start: usize, end: usize, offset: usize) -> u8 {
+        let mut group_value = 0u8;
+        for ch in start..end {
+            if self.channel_enable[ch] {
+                group_value |= 1 << (ch - offset);
+            }
+        }
+        group_value
+    }
     /// Writes a value to a specified register of the BD18378 LED Driver IC.
     fn write_register(&mut self, register: WriteRegister, value: u8) -> Result<[u8; 2], Error> {
         let mut data = [register as u8, value];
@@ -93,6 +178,14 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     /// Resets the status register of the BD18378 LED Driver IC.
     fn reset_status_register(&mut self) -> OperationResult {
         let _ = self.write_register(WriteRegister::StatusReset, 0b0011_1111u8)?;
+        Ok(())
+    }
+    
+    /// Checks if the BD18378 LED Driver IC is initialized before performing any operation.
+    fn check_initialized(&self) -> OperationResult {
+        if !self.is_initialized {
+            return Err(Error::NotInitialized);
+        }
         Ok(())
     }
 
