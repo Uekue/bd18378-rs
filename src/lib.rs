@@ -10,6 +10,12 @@ use crate::registers::WriteRegister;
 
 pub mod registers;
 
+/// The number of LED channels per register.
+const CHANNELS_PER_REGISTER: usize = 6;
+
+/// The total number of LED channels in the BD18378 LED Driver IC.
+const CHANNELS_PER_IC: usize = 12;
+
 /// The `Error` enum represents various error types that can occur during
 /// communication with the BD18378 LED Driver IC.
 #[derive(Debug, PartialEq, Clone, Copy)]
