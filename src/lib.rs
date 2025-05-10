@@ -139,7 +139,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         let mut value = 0u8;
         for ch in 6..12 {
             if self.channel_enable[ch] {
-                value |= 1 << ch - 6;
+                value |= 1 << (ch - 6);
             }
         }
         self.write_register(WriteRegister::ChannelEnable06To11, value)?;
