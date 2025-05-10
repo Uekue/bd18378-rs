@@ -94,9 +94,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
             return Err(Error::InvalidChannel);
         }
 
-        if !self.is_initialized {
-            return Err(Error::NotInitialized);
-        }
+        self.check_initialized()?;
 
         self.channel_enable[ch] = true;
         Ok(())
@@ -111,9 +109,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
             return Err(Error::InvalidChannel);
         }
 
-        if !self.is_initialized {
-            return Err(Error::NotInitialized);
-        }
+        self.check_initialized()?;
 
         self.channel_enable[ch] = false;
         Ok(())
@@ -122,9 +118,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     /// Update all LED channels based on their enabled state.
     pub fn update_all_channels(&mut self) -> OperationResult {
 
-        if !self.is_initialized() {
-            return Err(Error::NotInitialized);
-        }
+        self.check_initialized()?;
 
         // first 6 channels
         let mut value = 0u8;
@@ -161,6 +155,14 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     /// Resets the status register of the BD18378 LED Driver IC.
     fn reset_status_register(&mut self) -> OperationResult {
         let _ = self.write_register(WriteRegister::StatusReset, 0b0011_1111u8)?;
+        Ok(())
+    }
+    
+    /// Checks if the BD18378 LED Driver IC is initialized before performing any operation.
+    fn check_initialized(&self) -> OperationResult {
+        if !self.is_initialized {
+            return Err(Error::NotInitialized);
+        }
         Ok(())
     }
 
