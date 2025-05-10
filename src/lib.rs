@@ -45,7 +45,7 @@ pub type OperationResult = Result<(), Error>;
 pub struct Bd18378<'a, SPI: SpiDevice> {
     spi: &'a mut SPI,
     is_initialized: bool,
-    channel_enable: [bool; 12],
+    channel_enable: [bool; CHANNELS_PER_IC],
 }
 
 impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
@@ -56,7 +56,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         Bd18378 {
             spi,
             is_initialized: false,
-            channel_enable: [false; 12],
+            channel_enable: [false; CHANNELS_PER_IC],
         }
     }
 
@@ -128,7 +128,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
 
         // first 6 channels
         let mut value = 0u8;
-        for ch in 0..6 {
+        for ch in 0..CHANNELS_PER_REGISTER {
             if self.channel_enable[ch] {
                 value |= 1 << ch;
             }
@@ -137,9 +137,9 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
 
         // last 6 channels
         let mut value = 0u8;
-        for ch in 6..12 {
+        for ch in CHANNELS_PER_REGISTER..CHANNELS_PER_IC {
             if self.channel_enable[ch] {
-                value |= 1 << (ch - 6);
+                value |= 1 << (ch - CHANNELS_PER_REGISTER);
             }
         }
         self.write_register(WriteRegister::ChannelEnable06To11, value)?;
