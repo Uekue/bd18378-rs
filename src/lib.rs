@@ -127,22 +127,22 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         self.check_initialized()?;
 
         // first 6 channels
-        let mut value = 0u8;
+        let mut first_group_value = 0u8;
         for ch in 0..CHANNELS_PER_REGISTER {
             if self.channel_enable[ch] {
-                value |= 1 << ch;
+                first_group_value |= 1 << ch;
             }
         }
-        self.write_register(WriteRegister::ChannelEnable00To05, value)?;
+        self.write_register(WriteRegister::ChannelEnable00To05, first_group_value)?;
 
         // last 6 channels
-        let mut value = 0u8;
+        let mut second_group_value = 0u8;
         for ch in CHANNELS_PER_REGISTER..CHANNELS_PER_IC {
             if self.channel_enable[ch] {
-                value |= 1 << (ch - CHANNELS_PER_REGISTER);
+                second_group_value |= 1 << (ch - CHANNELS_PER_REGISTER);
             }
         }
-        self.write_register(WriteRegister::ChannelEnable06To11, value)?;
+        self.write_register(WriteRegister::ChannelEnable06To11, second_group_value)?;
 
         Ok(())
     }
