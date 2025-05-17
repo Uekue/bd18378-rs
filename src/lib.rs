@@ -164,6 +164,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         }
         group_value
     }
+    
     /// Writes a value to a specified register of the BD18378 LED Driver IC.
     fn write_register(&mut self, register: WriteRegister, value: u8) -> Result<[u8; 2], Error> {
         let mut data = [register as u8, value];
