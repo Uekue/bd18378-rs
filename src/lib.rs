@@ -5,8 +5,8 @@
 
 #![no_std]
 
-use embedded_hal::spi::SpiDevice;
 use crate::registers::WriteRegister;
+use embedded_hal::spi::SpiDevice;
 
 pub mod registers;
 
@@ -20,7 +20,6 @@ const CHANNELS_PER_IC: usize = 12;
 /// communication with the BD18378 LED Driver IC.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Error {
-
     /// Indicates a bus error during SPI communication coming from the used SPI device.
     BusError,
 
@@ -40,7 +39,6 @@ pub enum Error {
 /// The `OperationResult` type represents the result of an operation on the BD18378 LED Driver IC.
 pub type OperationResult = Result<(), Error>;
 
-
 /// The `Bd18378` struct represents the ROHM BD18378 LED Driver IC.
 pub struct Bd18378<'a, SPI: SpiDevice> {
     spi: &'a mut SPI,
@@ -49,7 +47,6 @@ pub struct Bd18378<'a, SPI: SpiDevice> {
 }
 
 impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
-
     /// Creates a new instance of the `Bd18378` struct. It takes a mutable reference
     /// to a SPI device as an argument.
     pub fn new(spi: &'a mut SPI) -> Self {
@@ -89,7 +86,9 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     /// *Note: This is not a live view of the IC state, but rather a flag
     /// indicating whether the initialization sequence has been successfully executed.
     /// This behavior might change in the future.*
-    pub fn is_initialized(&self) -> bool { self.is_initialized }
+    pub fn is_initialized(&self) -> bool {
+        self.is_initialized
+    }
 
     /// Enable a single LED channel by its index.
     ///
@@ -141,14 +140,17 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     /// The function first processes channels 0 to 5, then channels 6 to 11, updating
     /// the corresponding registers with the computed bit values.
     pub fn update_all_channels(&mut self) -> OperationResult {
-
         self.check_initialized()?;
 
         // first 6 channels
         let first_group_value = self.compute_channel_group_value(0, CHANNELS_PER_REGISTER, 0);
         self.write_register(WriteRegister::ChannelEnable00To05, first_group_value)?;
 
-        let second_group_value = self.compute_channel_group_value(CHANNELS_PER_REGISTER, CHANNELS_PER_IC, CHANNELS_PER_REGISTER);
+        let second_group_value = self.compute_channel_group_value(
+            CHANNELS_PER_REGISTER,
+            CHANNELS_PER_IC,
+            CHANNELS_PER_REGISTER,
+        );
         self.write_register(WriteRegister::ChannelEnable06To11, second_group_value)?;
 
         Ok(())
@@ -164,7 +166,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         }
         group_value
     }
-    
+
     /// Writes a value to a specified register of the BD18378 LED Driver IC.
     fn write_register(&mut self, register: WriteRegister, value: u8) -> Result<[u8; 2], Error> {
         let mut data = [register as u8, value];
@@ -181,7 +183,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         let _ = self.write_register(WriteRegister::StatusReset, 0b0011_1111u8)?;
         Ok(())
     }
-    
+
     /// Checks if the BD18378 LED Driver IC is initialized before performing any operation.
     fn check_initialized(&self) -> OperationResult {
         if !self.is_initialized {
@@ -194,9 +196,11 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
     ///
     /// This function is currently a no-op but is reserved for future functionality
     /// where register locking might be required to prevent unintended modifications.
-    /// 
+    ///
     /// *Note: This function is private and not used in the current implementation.*
-    fn _lock_register(&mut self) -> Result<(), ()> { Ok(()) }
+    fn _lock_register(&mut self) -> Result<(), ()> {
+        Ok(())
+    }
 
     /// Returns the initialization sequence for the BD18378 LED Driver IC.
     const fn get_init_sequence() -> [(WriteRegister, u8); 15] {
