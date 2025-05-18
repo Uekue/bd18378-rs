@@ -1,6 +1,8 @@
+use strum::FromRepr;
+
 /// The `WriteRegister` enum represents various writeable registers
 /// of the ROHM BD18378 LED Driver IC, along with their corresponding hexadecimal addresses.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, FromRepr)]
 #[repr(u8)]
 pub enum WriteRegister {
     
