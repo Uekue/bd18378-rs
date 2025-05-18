@@ -39,6 +39,18 @@ pub enum WriteRegister {
     ReservedB9 = 0xB9,
 }
 
+impl TryFrom<u8> for WriteRegister {
+    type Error = ();
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        let reg = WriteRegister::from_repr(value);
+        match reg {
+            Some(reg) => Ok(reg),
+            None => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 #[repr(u8)]
 pub enum ReadRegister {
