@@ -156,6 +156,25 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         Ok(())
     }
 
+    /// Set the calibration value for a specific LED channel.
+    ///
+    /// *Note: The calibration value is a 6-bit value, the upper 2 bits are ignored.
+    /// E.g. a value of 0x80 will result in a calibration value of 0x00. *
+    pub fn set_channel_calibration(&mut self, ch: usize, calibration: u8) -> OperationResult {
+        if ch >= self.channel_enable.len() {
+            return Err(Error::InvalidChannel);
+        }
+
+        self.check_initialized()?;
+
+        let register =
+            WriteRegister::try_from(WriteRegister::ChannelCalibration00 as u8 + ch as u8).unwrap();
+
+        self.write_register(register, calibration)?;
+
+        Ok(())
+    }
+
     /// Helper function to compute the value for a group of channels.
     fn compute_channel_group_value(&self, start: usize, end: usize, offset: usize) -> u8 {
         let mut group_value = 0u8;
