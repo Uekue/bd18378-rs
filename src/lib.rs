@@ -21,7 +21,7 @@ const CHANNELS_PER_IC: usize = 12;
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Error {
     /// Indicates a bus error during SPI communication coming from the used SPI device.
-    BusError,
+    SpiError,
 
     /// Indicates a communication error during SPI communication due to an unexpected response.
     CommunicationError,
@@ -193,7 +193,7 @@ impl<'a, SPI: SpiDevice> Bd18378<'a, SPI> {
         if result.is_ok() {
             Ok(data)
         } else {
-            Err(Error::BusError)
+            Err(Error::SpiError)
         }
     }
 
