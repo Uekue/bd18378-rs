@@ -60,6 +60,11 @@ fn main() {
 
 Auto-generated API documentation is available at: https://docs.rs/bd18378
 
+## 🛡️ Functional Safety
+
+This driver is (not yet) suitable for safety-critical applications. In case you need to 
+use it in such an environment, please contact me and I can make the necessary adaptions.
+
 ## 📚 License
 
 This project is dual-licensed under either:
