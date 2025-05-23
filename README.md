@@ -6,7 +6,7 @@ This crate supports `embedded-hal` traits and is fully compatible with `#![no_st
 
 ## ✨ Features
 
-- Supports the ROHM BD18378 LED driver IC
+- Supports the ROHM BD18378 12 channel LED driver IC
 - Communication via SPI interface 
 - Platform-agnostic via `embedded-hal::spi` traits
 - Supports `#![no_std]` environments
