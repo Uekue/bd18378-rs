@@ -7,10 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [unreleased]
 
 ### Added
-- README.md
-- CHANGELOG.md
-- Rust project manifest Cargo.toml
-- LICENSE with GPL-2.0
+- Basic project setup
 - Datasheet of BD18378EFV IC
+- Chip initialization
+- Enabling/disabling LED channels
+- Setting channel calibration values
+- Tests for all functions
 
 [unreleased]: https://github.com/Uekue/bd18378-rs/tree/main
