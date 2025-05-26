@@ -2,9 +2,12 @@
 name = "bd18378"
 version = "0.0.0"
 edition = "2021"
-authors = ["Florian Penn"]
-license = "GPL-2.0-only"
-description = "Driver for ROHM BD18378 12CH LED Driver IC"
+authors = ["Florian Penn <uekue1@googlemail.com>"]
+description = "Platform-Agnostic Driver for ROHM BD18378 12CH LED Driver IC"
+repository = "https://github.com/Uekue/bd18378-rs/"
+license = "MIT OR Apache-2.0"
+keywords = ["embedded", "bd18378", "led", "driver"]
+categories = ["embedded", "hardware-support", "no-std"]
 
 [dependencies]
 embedded-hal = "1.0.0"
