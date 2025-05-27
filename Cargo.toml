@@ -8,6 +8,9 @@ repository = "https://github.com/Uekue/bd18378-rs/"
 license = "MIT OR Apache-2.0"
 keywords = ["embedded", "bd18378", "led", "driver"]
 categories = ["embedded", "hardware-support", "no-std"]
+exclude = [
+    "doc/*",
+]
 
 [dependencies]
 embedded-hal = "1.0.0"
