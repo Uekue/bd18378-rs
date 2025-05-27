@@ -1,6 +1,6 @@
 [package]
 name = "bd18378"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
 authors = ["Florian Penn <uekue1@googlemail.com>"]
 description = "Platform-Agnostic Driver for ROHM BD18378 12CH LED Driver IC"
